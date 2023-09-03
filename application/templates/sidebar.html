@@ -1,0 +1,73 @@
+{% load static %}
+
+<div class="d-flex p-4" style="height: 100vh; position: fixed; box-sizing: border-box; user-select: none;">
+  <div class="p-3 shadow d-flex flex-column bd-border" style="width: 280px;">
+
+    <div class="text-nowrap">
+      <a href="{% url 'home' %}" class="btn btn-link link-body-emphasis text-decoration-none d-flex align-items-center justify-content-center">
+        <img src="{% static 'images/sweater.svg' %}" alt="sweater" class="bi pe-none me-1" width="45" height="45">
+        <span class="fw-medium" style="font-size: 30px">Sweater</span>
+      </a>
+    </div>
+
+    <hr style="color: rgba(0,0,0,0.25)">
+
+    <div class="d-flex flex-column align-items-start">
+      <a href="{% url 'home' %}" class="btn btn-bd-light flex-row mb-2 px-3 py-2">
+        <img class="bi pe-none me-2" width="20" height="20" src="{% static 'images/house.svg' %}" alt="home">
+        <span class="me-2 fs-5">Головна</span>
+      </a>
+
+      <a href="{% url 'search' %}" class="btn btn-bd-light align-items-center flex-row mb-2 px-3 py-2">
+        <img class="bi pe-none me-2" width="20" height="20" src="{% static 'images/search.svg' %}" alt="search">
+        <span class="me-2 fs-5">Пошук</span>
+      </a>
+
+      <a href="#/notification" class="btn btn-bd-light align-items-center flex-row mb-2 px-3 py-2">
+        <img class="bi pe-none me-2" width="20" height="20" src="{% static 'images/bell.svg' %}" alt="notification">
+        <span class="me-2 fs-5">Сповіщення</span>
+      </a>
+
+      <a href="#/message" class="btn btn-bd-light align-items-center flex-row mb-2 px-3 py-2 mb-auto">
+        <img class="bi pe-none me-2" width="20" height="20" src="{% static 'images/envelope.svg' %}" alt="message">
+        <span class="me-2 fs-5">Повідомлення</span>
+      </a>
+    </div>
+
+    <div class="my-3"></div>
+
+    <a href="{% url 'new_post' %}" class="btn {% if user.is_authenticated %} btn-bd-primary-2 {% else %} btn-bd-primary {% endif %} d-flex px-3 py-2 justify-content-center mb-auto" style="border-radius: 50px">
+      <span class="fs-5">Створити пост</span>
+    </a>
+
+    <div class="justify-content-center">
+    {% if request.user.is_authenticated %}
+      <div class="dropup-center">
+        <a href="" class="d-flex justify-content-center align-items-center btn btn-bd-light" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{% if request.user.profile_image %} {{ request.user.profile_image.url }} {% else %} {% static 'images/avatar.svg' %} {% endif %}" alt="user" width="25" height="25" class="object-fit-cover rounded-circle me-2">
+          <span class="fs-5 fw-medium align-items-center">{% if request.user.first_name or request.user.last_name %} {{ request.user.first_name }} {{ request.user.last_name }} {% else %} {{ request.user.username }} {% endif %}</span>
+          <img class="bi pe-none ms-3" width="15" height="15" src="{% static 'images/three-dots-vertical.svg' %}" alt="three-dots" style="margin-top: 2px">
+        </a>
+        <ul class="dropdown-menu btn-bd-light shadow-sm" style="border-radius: 20px; width: 190px">
+          <li><a class="btn ms-2 me-2 mt-1 mb-1 d-flex" style="border-radius: 15px" href="#/settings">Налаштування</a></li>
+          <li><a class="btn ms-2 me-2 mt-1 mb-1 d-flex" style="border-radius: 15px" href="{% url 'profile' request.user.username %}">Профіль</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="btn ms-2 me-2 mt-1 mb-1 d-flex" style="border-radius: 15px" href="{% url 'logout' %}">Вихід</a></li>
+          {% if request.user.is_superuser %}
+            <li><a class="btn ms-2 me-2 mt-1 mb-1 d-flex" style="border-radius: 15px" href="/admin">Admin</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    {% else %}
+      <a href="/login" class="d-flex justify-content-center align-items-center btn btn-bd-light">
+        <span class="fs-5">Увійти</span>
+      </a>
+    {% endif %}
+    </div>
+
+
+  </div>
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+<script src="{% static 'js/sidebars.js' %}"></script>

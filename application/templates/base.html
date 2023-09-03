@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" data-bs-theme="auto">
+<head>
+  <script src="{%  static 'js/color-modes.js' %}"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Usik Sviatoslav, and Bootstrap contributors">
+
+    <title>Sweater</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/sweater_fav_icon.png' %}">
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sidebars/">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/sweater.css' %}" rel="stylesheet">
+</head>
+<body>
+  <aside>
+    {% include 'sidebar.html' %}
+  </aside>
+
+  <main style="padding-left: 328px;">
+    {% block main %}
+
+    {% endblock main %}
+  </main>
+
+</body>
+</html>

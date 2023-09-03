@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block main %}
+
+<div class="d-flex fixed-top py-4" style="margin-left: 328px; box-sizing: border-box; height: 100vh;">
+  <div class="shadow d-flex bd-border" style="backdrop-filter: blur(5px);">
+    <div class="d-flex flex-column justify-content-center align-items-center mx-4 my-0" style="width: 590px">
+      <div style="width: 80%">
+        <!-- Header -->
+        <div class="text-center">
+          <span style="font-size: 25px">
+            {% if page == 'login' %}
+              Вхід
+            {% else %}
+              Реєстрація
+            {% endif %}
+          </span>
+        </div>
+        <!-- END Header -->
+
+        <!-- Form -->
+        <div class="d-flex justify-content-center">
+          <div style="width: 90%">
+
+            <form action="" method="POST">
+              {% csrf_token %}
+              {% for field in form %}
+
+                {% if page == 'login' %}
+                  <!-- start form == 'login' -->
+                  <label class="form-label pt-3">{{ field.label }}</label>
+                  {{ field }}
+                  <!-- end form == 'login' -->
+
+                {% else %}
+                  <!-- start form == 'register' -->
+                  {% if field.name == 'first_name' %}
+                    <div class="d-flex flex-row mt-3 mb-2">
+                      <div class="me-2">
+                        <div class="pb-2">
+                          {{ field.label }}
+                        </div>
+                          {{ field }}
+                      </div>
+                    {% elif field.name == 'last_name'%}
+                      <div class="ms-2">
+                        <div class="pb-2">
+                          {{ field.label }}
+                        </div>
+                          {{ field }}
+                      </div>
+                    </div>
+
+                  {% else %}
+                    <label class="form-label pt-3">{{ field.label }}</label>
+                    {{ field }}
+                  <!-- end form == 'register'-->
+                  {% endif %}
+                {% endif %}
+
+
+                {% if field.errors %}
+                  <div class="pt-2">
+                    <div class="alert alert-danger m-auto p-2" style="font-size: 0.75rem;">
+                      {% for error in field.errors %}
+                        <ul class="m-0">
+                          <li>
+                            {{ error }}
+                          </li>
+                        </ul>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% endfor %}
+
+              <div class="d-flex justify-content-center">
+                <input type="submit" value="{% if page == 'login' %}Вхід{% else %}Зареєструватись{% endif %}" class="btn btn-success mt-3 fs-6 shadow-sm" style="width: 100%">
+              </div>
+
+            </form>
+
+            <div class="d-flex justify-content-center">
+              <div class="d-flex flex-row fs-6 mt-3">
+                {% if page == 'login' %}
+                <p class="m-0 pe-2">Ще не зареєструвались?</p>
+                <a href="{% url 'register' %}" class="link text-decoration-none">Зареєструватись</a>
+
+                {% else %}
+                <p class="m-0 pe-2">Вже зареєструвались?</p>
+                <a href="{% url 'login' %}" class="link text-decoration-none">Увійти</a>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <!-- END Form -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock main %}
+
+
+
+
+

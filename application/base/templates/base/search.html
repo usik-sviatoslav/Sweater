@@ -1,0 +1,51 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+
+  <div class="d-flex flex-column" style="user-select: none">
+    <div class="mt-4 d-flex justify-content-center">
+      <div class="d-flex flex-column" style="width: 534px">
+
+        <div class="input-group mb-3 mt-2" style="height: 40px">
+          <span class="input-group-text ps-3" style="width: 40px; border-radius: 20px 0 0 20px; border-right: 0; background-color: var(--bs-body-bg)">
+            <img width="15" height="15" src="{% static 'images/search.svg' %}" alt="search">
+          </span>
+          <input type="text" class="form-control" placeholder="Пошук" aria-label="Пошук" style="border-radius: 0 20px 20px 0; border-left: 0; box-shadow: 0 0 0 0; border-color: var(--bs-border-color)">
+        </div>
+
+        {% for user in users %}
+        {% if request.user != user %}
+        <div class="d-flex flex-row align-items-center">
+          <a href="{% url 'profile' user.username %}" class="text-decoration-none link-body-emphasis flex-row me-auto" style="width: 100%">
+            <div class="d-flex align-items-center btn px-0" style="border-radius: 10px; border: 0">
+              <img src="{% if user.profile_image %} {{ user.profile_image.url }} {% else %} {% static 'images/avatar.svg' %} {% endif %}" alt="user" width="40" height="40" class="object-fit-cover rounded-circle bd-border me-2" style="image-rendering: smooth">
+
+              <div class="d-flex flex-column text-start" style="line-height: 18px;">
+                <span class="fw-normal" style="font-size: 18px;">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="fw-normal" style="font-size: 12px;">@{{ user.username }}</span>
+              </div>
+            </div>
+          </a>
+          <!-- if request.user not subscribed on user -->
+          <div class="btn btn-bd-primary py-0 d-flex align-items-center subscribe-button" style="height: 30px" data-user="{{ user.id }}">
+            <span>Підписатись</span>
+          </div>
+          <!-- endif -->
+        </div>
+        {% endif %}
+
+        {% if forloop.last %}
+          <div class="mb-4"></div>
+        {% else %}
+          <div class="d-flex justify-content-center">
+            <hr class="my-1" style="color: rgba(0,0,0,0.25); width: 514px">
+          </div>
+        {% endif %}
+        {% endfor %}
+
+      </div>
+  </div>
+</div>
+
+{% endblock content %}

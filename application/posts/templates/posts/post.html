@@ -1,0 +1,13 @@
+{% block post %}
+
+  <!-- start "post" block -->
+  {% include 'posts/post_component.html' %}
+  <!-- end "post" block -->
+
+  <hr {% if post.commentforpost_set.count == 0 %} style="display: none;" {% endif %}>
+
+  <!-- start "comments" block -->
+  {% include 'posts/comments_for_post.html' %}
+  <!-- end "comments" block -->
+
+{% endblock post %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block main %}
+<div class="d-flex py-4" style="box-sizing: border-box; height: 100vh;">
+  <div class="shadow d-flex bd-border">
+    <div class="mx-4 my-0 overflow-auto scroll-bar scroll-bar::-webkit-scrollbar" style="width: 590px;">
+      {% block content %}
+
+
+      {% endblock content %}
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.1.1/luxon.min.js"></script>
+<script src="{% static 'js/sweater.js' %}"></script>
+<script>
+  const postDateElements = document.querySelectorAll('.created_at');
+
+  postDateElements.forEach(dateElement => {
+    const postCreatedAtString = dateElement.getAttribute('data-post-created');
+    const calculatedTime = formatDate(postCreatedAtString);
+    dateElement.innerHTML = calculatedTime;
+  });
+</script>
+<script>
+    const staticBaseUrl = "{% get_static_prefix %}";
+</script>
+
+{% endblock main %}

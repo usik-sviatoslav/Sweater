@@ -1,0 +1,69 @@
+{% extends "main.html" %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex flex-column" style="user-select: none">
+  <div class="mt-4 d-flex justify-content-center">
+    <div class="d-flex flex-column mt-2">
+
+      <div class="d-flex flex-row" style="min-height: 165px">
+
+
+        <div class="d-flex flex-column" style="width: 370px">
+          <span class="fw-medium" style="font-size: 30px;">{{ user.first_name }} {{ user.last_name }}</span>
+          <span class="fw-medium" style="font-size: 16px">@{{ user.username }}</span>
+          {% if user.bio %}
+          <span class="mt-4" style="font-size: 15px">
+            {{ user.bio }}
+          </span>
+          {% endif %}
+        </div>
+
+        <img src="{% if user.profile_image %} {{ user.profile_image.url }} {% else %} {% static 'images/avatar.svg' %} {% endif %}" alt="user" class="object-fit-cover rounded-circle bd-border profile-img ms-4 mb-auto">
+
+      </div>
+
+      {% if request.user == user %}
+      <span class="btn btn-bd-primary mt-3" style="border-radius: 10px">Редагувати профіль</span>
+      {% endif %}
+
+      <hr class="mb-0" style="border-color: rgba(0,0,0,0.25)">
+
+      <div class="d-flex flex-row justify-content-center">
+
+        <a href="{% url 'profile' user.username %}" class="d-flex flex-column w-100 btn btn-bd-light p-1 pb-0" style="border-radius: 0; border: 0">
+          <span class="mb-1">Медіа пост</span>
+          {% if page == 'media-posts' %}
+          <div class="d-flex justify-content-center">
+            <div style="width: 120px; border: 1px solid rgba(0,0,0,0.25); border-radius: 1px;"></div>
+          </div>
+          {% endif %}
+        </a>
+
+        <a href="{% url 'profile_posts' username=user.username posts='posts' %}" class="d-flex flex-column w-100 btn btn-bd-light p-1 pb-0" style="border-radius: 0; border: 0">
+          <span class="mb-1">Пост</span>
+          {% if page == 'posts' %}
+          <div class="d-flex justify-content-center">
+            <div style="width: 80px; border: 1px solid rgba(0,0,0,0.25); border-radius: 1px;"></div>
+          </div>
+          {% endif %}
+        </a>
+
+      </div>
+
+      <hr class="mt-0" style="border-color: rgba(0,0,0,0.25)">
+
+
+      {% if page == 'media-posts' %}
+        {% include 'posts/posts_grid.html' %}
+        <div class="mb-4"></div>
+      {% else %}
+        {% include 'posts/posts_list.html' %}
+      {% endif %}
+
+
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

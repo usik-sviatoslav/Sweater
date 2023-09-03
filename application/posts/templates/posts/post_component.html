@@ -1,0 +1,110 @@
+{% load static %}
+
+  <!-- start "profile_img - username - created at - advanced" block -->
+  <div class="d-flex flex-row">
+    <a href="{% url 'profile' post.user.username %}" class="btn btn-bd-light p-1 me-2">
+      <img src="{% if post.user.profile_image %} {{ post.user.profile_image.url }} {% else %} {% static 'images/avatar.svg' %} {% endif %}" alt="user" width="44" height="44" class="object-fit-cover rounded-circle bd-border" style="image-rendering: smooth">
+    </a>
+
+    <div class="d-flex flex-row align-items-center" style="width: 472px">
+      <a href="{% url 'profile' post.user.username %}" class="text-decoration-none link-body-emphasis">
+        <span class="m-0 fw-medium" style="font-size: 19px;">{{post.user.username}}</span>
+      </a>
+
+      <div class="d-flex flex-row align-items-center ms-auto">
+        <span style="font-size: 15px; color: rgba(64,64,64,0.75);" class="created_at me-1" data-post-created="{{ post.created_at|date:'c' }}"></span>
+        <a href="#/advanced" class="btn btn-bd-light d-flex justify-content-center align-items-center p-2">
+          <img src="{% static 'images/three-dots-vertical.svg' %}" alt="three-dots" width="18" height="18">
+        </a>
+      </div>
+
+    </div>
+  </div>
+  <!-- end "profile_img - username - created at - advanced" block -->
+
+  <!-- start "content" block -->
+  <div class="me-auto my-2" style="width: 533px">
+    {% if post.content %}
+    <p class="text-wrap mb-0" style="font-size: 16px; user-select: text">{{ post.content }}</p>
+    {% endif %}
+  </div>
+  <!-- end "content" block -->
+
+  <!-- start "file" block -->
+  <picture>
+    {% if post.file %}
+    <img src="{{ post.file.url }}" alt="user" class="object-fit-cover shadow-sm bd-border" style="max-width: 410px; max-height: 472px">
+    {% endif %}
+  </picture>
+  <!-- end "file" block -->
+
+  <!-- start "buttons" block -->
+  <div class="d-flex align-content-center my-2">
+    <button class="like-post btn btn-bd-light d-flex justify-content-center align-items-center p-2" data-post-id="{{ post.id }}" data-user="{{ request.user.is_authenticated }}">
+      {% if post.id in like_post_by_user %}
+        <img src="{% static 'images/heart-fill.svg' %}" alt="heart" class="bi pe-none" width="25" height="25">
+      {% else %}
+        <img src="{% static 'images/heart.svg' %}" alt="heart" class="bi pe-none" width="25" height="25">
+      {% endif %}
+    </button>
+
+    <!-- Button trigger modal -->
+    <button class="btn btn-bd-light d-flex justify-content-center align-items-center p-2" data-bs-toggle="modal" data-bs-target="#replyOnPost">
+      <img src="{% static 'images/chat.svg' %}" alt="chat" class="bi pe-none" width="25" height="25">
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="replyOnPost" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="margin-left: 398px">
+        <div class="modal-content shadow bd-border" style="border-radius: 20px">
+
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Додати коментар</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <form action="{% url 'reply_on_post' post.id %}" method="POST">
+              {% csrf_token %}
+              {% for field in forms %}
+                {{ field }}
+              {% endfor%}
+
+              <div class="modal-footer">
+                <button class="btn btn-success">Опублікувати</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <a href="#/share" class="btn btn-bd-light d-flex justify-content-center align-items-center p-2">
+      <img src="{% static 'images/send.svg' %}" alt="send" class="bi pe-none" width="25" height="25">
+    </a>
+  </div>
+  <!-- end "buttons" block -->
+
+  <!-- start "info_for_post" block -->
+  <div class="comments-and-likes-block" data-post-id="{{ post.id }}" {% if post.commentforpost_set.count == 0 and post.likeforpost_set.count == 0 %} style="display: none;" {% endif %}>
+    <div class="d-flex flex-row align-items-center mb-2" style="font-size: 15px;">
+
+      <a href="{% url 'view_post' post.id %}" class="text-decoration-none link-body-emphasis post-comments-count" data-post-id="{{ post.id }}">
+        {% if post.commentforpost_set.count > 0 %}
+        <span>{% if post.commentforpost_set.count > 1 %}{{ post.commentforpost_set.count }} відповідей {% else %} Одна відповідь {% endif %}</span>
+        {% endif %}
+      </a>
+
+      <span class="mx-2 info-dot" data-post-id="{{ post.id }}"{% if post.commentforpost_set.count == 0 or post.likeforpost_set.count == 0 %} style="display: none;" {% endif %}>·</span>
+
+      <a href="#/show-who-liked" class="text-decoration-none link-body-emphasis post-likes-count" data-post-id="{{ post.id }}">
+        {% if post.likeforpost_set.count > 0 %}
+          <span>{% if post.likeforpost_set.count > 1 %}{{ post.likeforpost_set.count }} позначок "Подобається" {% else %} Одна позначка "Подобається" {% endif %}</span>
+        {% endif %}
+      </a>
+
+    </div>
+  </div>
+  <!-- end "info_for_post" block -->

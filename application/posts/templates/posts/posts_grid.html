@@ -1,0 +1,21 @@
+{% load static %}
+
+<div class="d-flex justify-content-center">
+  <div class="post-container">
+    {% for post in posts %}
+    <div class="post">
+      {% if post.file %}
+      <img class="object-fit-cover shadow-sm bd-border post-button" type="button" src="{{ post.file.url }}" alt="user" data-post-id="{{ post.id }}">
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% if not posts %}
+<div class="d-flex justify-content-center align-items-center mt-5">
+  <p class="fw-light" style="font-size: 20px">Поки немає жодного посту!</p>
+</div>
+{% endif %}
+
+<script src="{% static 'js/sweater.js' %}"></script>
