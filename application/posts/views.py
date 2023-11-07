@@ -26,6 +26,7 @@ class PostListView(ListView):
             .annotate(comments_count=Count('comments', filter=Q(comments__parent_comment=None)))
             .select_related('user')
             .prefetch_related('likes', 'user__subscribers')
+            .order_by('-created_at')
         )
 
         return posts
