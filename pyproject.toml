@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "sweater"
+version = "0.1.0"
+description = ""
+authors = ["usik-sviatoslav <usik.sviatoslav.qa@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.7"
+pillow = "^10.1.0"
+environs = "^9.5.0"
+django-debug-toolbar = "^4.2.0"
+psycopg2-binary = "^2.9.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
