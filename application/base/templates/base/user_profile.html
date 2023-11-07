@@ -23,8 +23,40 @@
 
       </div>
 
+
+      <div class="d-flex flex-row">
+
+        <div class="d-flex flex-row align-items-center" style="border-radius: 0; border: 0;">
+          <span class="fw-bold">{{ post_count }}</span>
+          <span class="ms-1">дописів</span>
+        </div>
+
+        <a href="{% url 'followers' username=user.username %}" class="d-flex flex-row btn mx-5 p-0" style="border-radius: 0; border: 0">
+          <span>Читачі:</span>
+          <span class="ms-1 fw-bold subscribers-count">{{ user.subscribers.all.count }}</span>
+        </a>
+
+        <a href="{% url 'subscriptions' username=user.username %}" class="d-flex flex-row btn p-0" style="border-radius: 0; border: 0">
+          <span>Стежить:</span>
+          <span class="ms-1 fw-bold subscriptions-count">{{ user.subscriptions.all.count }}</span>
+        </a>
+
+      </div>
+
       {% if request.user == user %}
-      <span class="btn btn-bd-primary mt-3" style="border-radius: 10px">Редагувати профіль</span>
+      <a href="{% url 'edit_profile' user.username %}" class="btn btn-bd-primary mt-3" style="border-radius: 10px">
+        <span>Редагувати профіль</span>
+      </a>
+      {% else %}
+        {% if request.user not in user.subscribers.all %}
+        <button class="btn btn-bd-primary mt-3 subscribe-button" style="border-radius: 10px" data-user="{{ user.username }}" data-user-auth="{{ request.user.is_authenticated }}">
+          <span>Підписатись</span>
+        </button>
+        {% else %}
+        <button class="btn btn-bd-primary mt-3 unsubscribe-button" style="border-radius: 10px" data-user="{{ user.username }}" data-user-auth="{{ request.user.is_authenticated }}">
+          <span>Відписатись</span>
+        </button>
+        {% endif %}
       {% endif %}
 
       <hr class="mb-0" style="border-color: rgba(0,0,0,0.25)">
@@ -40,7 +72,7 @@
           {% endif %}
         </a>
 
-        <a href="{% url 'profile_posts' username=user.username posts='posts' %}" class="d-flex flex-column w-100 btn btn-bd-light p-1 pb-0" style="border-radius: 0; border: 0">
+        <a href="{% url 'profile_posts' username=user.username %}" class="d-flex flex-column w-100 btn btn-bd-light p-1 pb-0" style="border-radius: 0; border: 0">
           <span class="mb-1">Пост</span>
           {% if page == 'posts' %}
           <div class="d-flex justify-content-center">

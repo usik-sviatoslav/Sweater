@@ -38,9 +38,39 @@
       {% endif %}
     </button>
 
-    <a href="#/add-comment" class="btn btn-bd-light d-flex justify-content-center align-items-center p-2">
+
+    <!-- Button trigger modal -->
+    <button class="btn btn-bd-light d-flex justify-content-center align-items-center p-2" data-bs-toggle="modal" data-bs-target="#comment-№{{ comment.id }}">
       <img src="{% static 'images/chat.svg' %}" alt="chat" class="bi pe-none" width="20" height="20">
-    </a>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="comment-№{{ comment.id }}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" style="margin-left: 398px">
+        <div class="modal-content shadow bd-border" style="border-radius: 20px">
+
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Додати коментар</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <form action="{% url 'reply_on_comment' post_id=post.id comment_id=comment.id %}" method="POST">
+              {% csrf_token %}
+              {% for field in forms %}
+                {{ field }}
+              {% endfor%}
+
+              <div class="modal-footer">
+                <button class="btn btn-success">Опублікувати</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <a href="#/share" class="btn btn-bd-light d-flex justify-content-center align-items-center p-2">
       <img src="{% static 'images/send.svg' %}" alt="send" class="bi pe-none" width="20" height="20">
@@ -49,23 +79,23 @@
   <!-- end "buttons" block -->
 
   <!-- start "info_for_comment" block -->
-  <div class="comments-and-likes-block" data-post-id="{{ post.id }}" data-comment-id="{{ comment.id }}" {% if comment.commentforcomment_set.count == 0 and comment.likeforcomment_set.count == 0 %} style="display: none;" {% endif %}>
+  <div class="comments-and-likes-block" data-post-id="{{ post.id }}" data-comment-id="{{ comment.id }}" {% if comment.replies.count == 0 and comment.likes.count == 0 %} style="display: none;" {% endif %}>
     <div class="d-flex flex-row align-items-center">
 
       <div class="d-flex flex-row" style="font-size: 15px;">
         <a href="{% url 'view_comment' post_id=post.id comment_id=comment.id %}" class="text-decoration-none link-body-emphasis comment-comments-count" data-post-id="{{ post.id }}" data-comment-id="{{ comment.id }}">
-          {% if comment.commentforcomment_set.count > 0 %}
-          <span>{% if comment.commentforcomment_set.count > 1 %}{{ comment.commentforcomment_set.count }} відповідей {% else %} Одна відповідь {% endif %}</span>
+          {% if comment.replies.count > 0 %}
+          <span>{% if comment.replies.count > 1 %}{{ comment.replies.count }} відповідей {% else %} Одна відповідь {% endif %}</span>
           {% endif %}
         </a>
 
 
-        <span class="mx-2 info-dot" data-post-id="{{ post.id }}" data-comment-id="{{ comment.id }}" {% if comment.commentforcomment_set.count == 0 or comment.likeforcomment_set.count == 0 %} style="display: none;" {% endif %}>·</span>
+        <span class="mx-2 info-dot" data-post-id="{{ post.id }}" data-comment-id="{{ comment.id }}" {% if comment.replies.count == 0 or comment.likes.count == 0 %} style="display: none;" {% endif %}>·</span>
 
 
         <a href="#/show-who-liked" class="text-decoration-none link-body-emphasis comment-likes-count" data-post-id="{{ post.id }}" data-comment-id="{{ comment.id }}">
-          {% if comment.likeforcomment_set.count > 0 %}
-            <span>{% if comment.likeforcomment_set.count > 1 %}{{ comment.likeforcomment_set.count }} позначок "Подобається" {% else %} Одна позначка "Подобається" {% endif %}</span>
+          {% if comment.likes.count > 0 %}
+            <span>{% if comment.likes.count > 1 %}{{ comment.likes.count }} позначок "Подобається" {% else %} Одна позначка "Подобається" {% endif %}</span>
           {% endif %}
         </a>
       </div>

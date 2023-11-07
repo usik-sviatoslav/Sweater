@@ -15,7 +15,6 @@
         </div>
 
         {% for user in users %}
-        {% if request.user != user %}
         <div class="d-flex flex-row align-items-center">
           <a href="{% url 'profile' user.username %}" class="text-decoration-none link-body-emphasis flex-row me-auto" style="width: 100%">
             <div class="d-flex align-items-center btn px-0" style="border-radius: 10px; border: 0">
@@ -27,6 +26,7 @@
               </div>
             </div>
           </a>
+          {% if request.user != user %}
           {% if request.user not in user.subscribers.all %}
           <button class="btn btn-bd-primary py-0 d-flex align-items-center subscribe-button" style="height: 30px" data-user="{{ user.username }}" data-user-auth="{{ request.user.is_authenticated }}">
             <span>Підписатись</span>
@@ -36,8 +36,8 @@
             <span>Відписатись</span>
           </button>
           {% endif %}
+          {% endif %}
         </div>
-        {% endif %}
 
         {% if forloop.last %}
           <div class="mb-4"></div>

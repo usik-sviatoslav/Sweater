@@ -40,14 +40,14 @@
       <span class="fs-5">Створити пост</span>
     </a>
 
-    <div class="justify-content-center">
+    <div class="d-flex justify-content-center">
     {% if request.user.is_authenticated %}
       <div class="dropup-center">
-        <a href="" class="d-flex justify-content-center align-items-center btn btn-bd-light" data-bs-toggle="dropdown" aria-expanded="false">
+        <button class="d-flex align-items-center btn btn-bd-light" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="{% if request.user.profile_image %} {{ request.user.profile_image.url }} {% else %} {% static 'images/avatar.svg' %} {% endif %}" alt="user" width="25" height="25" class="object-fit-cover rounded-circle me-2">
           <span class="fs-5 fw-medium align-items-center">{% if request.user.first_name or request.user.last_name %} {{ request.user.first_name }} {{ request.user.last_name }} {% else %} {{ request.user.username }} {% endif %}</span>
           <img class="bi pe-none ms-3" width="15" height="15" src="{% static 'images/three-dots-vertical.svg' %}" alt="three-dots" style="margin-top: 2px">
-        </a>
+        </button>
         <ul class="dropdown-menu btn-bd-light shadow-sm" style="border-radius: 20px; width: 190px">
           <li><a class="btn ms-2 me-2 mt-1 mb-1 d-flex" style="border-radius: 15px" href="#/settings">Налаштування</a></li>
           <li><a class="btn ms-2 me-2 mt-1 mb-1 d-flex" style="border-radius: 15px" href="{% url 'profile' request.user.username %}">Профіль</a></li>
@@ -59,7 +59,7 @@
         </ul>
       </div>
     {% else %}
-      <a href="/login" class="d-flex justify-content-center align-items-center btn btn-bd-light">
+      <a href="/login" class="d-flex justify-content-center align-items-center btn btn-bd-light w-100">
         <span class="fs-5">Увійти</span>
       </a>
     {% endif %}

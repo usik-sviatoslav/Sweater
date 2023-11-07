@@ -1,0 +1,54 @@
+{% extends "main.html" %}
+{% block content %}
+
+<div class="d-flex flex-column justify-content-center align-items-center my-5" style="width: 590px">
+  <div style="width: 80%">
+
+    <!-- Header -->
+    <div class="text-center">
+      <span style="font-size: 25px">Змінити дані профілю</span>
+    </div>
+    <!-- END Header -->
+
+    <!-- Form -->
+    <div class="d-flex justify-content-center">
+      <div style="width: 90%">
+
+        <form id="UTC" action="" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <label class="form-label pt-3">{{ field.label }}</label>
+              {{ field }}
+
+              <div class="pt-2">
+                {% if field.errors %}
+                  {% for error in field.errors %}
+                    <div class="alert {% if 'Додайте' in error %} alert-warning {% else %} alert-danger {% endif %} m-auto p-2" style="font-size: 0.75rem;">
+                      <ul class="m-0">
+                        <li>
+                          {{ error }}
+                        </li>
+                      </ul>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+
+          {% endfor %}
+
+          <div class="d-flex justify-content-center">
+            <input type="submit" value="Зберігти" class="btn btn-success mt-4 mb-3 fs-6 shadow-sm" style="width: 100%">
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+    <!-- END Form -->
+
+  </div>
+</div>
+
+
+{% endblock content %}
