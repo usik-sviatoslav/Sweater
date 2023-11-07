@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from io import BytesIO
 
 from PIL import Image
@@ -10,8 +11,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     email = models.EmailField(unique=True, blank=True, max_length=254)
     bio = models.CharField(max_length=150, null=True, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date: datetime = models.DateField(null=True, blank=True)
     profile_image = models.ImageField(upload_to='profile_images', null=True, blank=True)
+    subscriptions = models.ManyToManyField('self', symmetrical=False, related_name='subscribers')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
