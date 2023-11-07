@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, CommentForPost
+from .models import Post, Comment
 
 
 def warning_form(self, form):
@@ -44,9 +44,9 @@ class NewPostPage(forms.ModelForm):
             self.add_error('content', 'Додайте підпис або зображення!')
 
 
-class CommentForPostPage(forms.ModelForm):
+class CommentModalWindow(forms.ModelForm):
     class Meta:
-        model = CommentForPost
+        model = Comment
         fields = ['content']
 
     content = forms.CharField(
@@ -58,3 +58,14 @@ class CommentForPostPage(forms.ModelForm):
             'style': 'border: 0; resize: none; box-shadow: 0 0 0 0; border-color: var(--bs-border-color); mb-3;'
         })
     )
+
+
+class EditPostPage(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['content']
+
+    content = forms.CharField(
+        label='Редагувати',
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '3'}),
+        required=False)

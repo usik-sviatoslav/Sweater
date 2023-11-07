@@ -1,6 +1,6 @@
 from django import forms
 from .models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 
 def invalid_form(self, form):
@@ -116,3 +116,41 @@ class RegistrationPage(UserCreationForm):
             if password1 != password2:
                 invalid_form(self, 'password2')
                 raise forms.ValidationError('Паролі не співпадають!')
+
+
+class EditUserProfilePage(UserChangeForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'bio', 'birth_date']
+
+    username = forms.CharField(
+        label='Username',
+        widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+
+    first_name = forms.CharField(
+        label='Ім\'я',
+        widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+
+    last_name = forms.CharField(
+        label='Прізвище',
+        widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
+
+    email = forms.EmailField(
+        label='Електронна пошта',
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'example@gmail.com'}), required=False)
+
+    bio = forms.CharField(
+        label='Про себе',
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': '4'}),
+        required=False)
+
+    birth_date = forms.DateField(
+        label='День народження',
+        widget=forms.widgets.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        required=False)
+
+    password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        required=False
+    )
