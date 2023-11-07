@@ -1,17 +1,16 @@
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
+from django.db.models import Count, Q
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView
+from django.views.generic import ListView, UpdateView
 
-from posts.forms import CommentForPostPage
+from posts.forms import CommentModalWindow
 from posts.models import Post
 from posts.views import like_button_view
-from .forms import RegistrationPage, LoginPage
-from .models import User
-
-
-def logout_user(request):
-    logout(request)
-    return redirect('home')
+from base.forms import RegistrationPage, LoginPage, EditUserProfilePage
+from base.models import User
 
 
 class LoginPageView(ListView):
@@ -62,22 +61,120 @@ class RegisterPageView(ListView):
             return render(request, self.template_name, {self.context_object_name: form})
 
 
-def user_profile(request, username, posts=None):
-    form = CommentForPostPage()
-    user = get_object_or_404(User, username=username)
-    page = 'media-posts' if posts is None else 'posts'
-    true_false = True if page == 'media-posts' else False
+class UserProfile(ListView):
 
-    post = Post.objects.filter(user__username=username, is_file=true_false)
-    context = {'user': user, 'posts': post, 'page': page, 'forms': form}
-    like_button_view(request, context)
-    return render(request, 'base/user_profile.html', context)
+    def get_user(self):
+        return get_object_or_404(User, username=self.kwargs['username'])
+
+    def get_view(self):
+        view_name = self.request.resolver_match.view_name
+        return 'media-posts' if view_name == 'profile' else 'posts'
+
+    def is_file(self):
+        return True if self.get_view() == 'media-posts' else False
+
+    def get_context_data(self, **kwargs):
+        kwargs['user'] = self.get_user()
+        kwargs['page'] = self.get_view()
+        kwargs['forms'] = CommentModalWindow()
+        kwargs['like_button_view'] = like_button_view(self.request, kwargs)
+        return kwargs
+
+    def get_queryset(self):
+        queryset = Post.objects.filter(user__username=self.kwargs['username'])
+        post_filter = (
+            queryset
+            .annotate(comments_count=Count('comments', filter=Q(comments__parent_comment=None)))
+            .filter(is_file=self.is_file())
+            .select_related('user')
+            .prefetch_related('likes', 'user__subscribers')
+        )
+        return queryset.count(), post_filter
+
+    def get(self, request, *args, **kwargs):
+        post_count, post_filter = self.get_queryset()
+        context = self.get_context_data(post_count=post_count, posts=post_filter)
+        return render(request, 'base/user_profile.html', context)
+
+
+class UpdateUserProfile(UpdateView):
+    model = User
+    form_class = EditUserProfilePage
+    template_name = 'base/edit_user_profile.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get(self, request, *args, **kwargs):
+        user = self.get_object()
+        form = self.form_class(instance=user)
+        return render(request, self.template_name, {'form': form})
+
+    def form_valid(self, form):
+        user = self.get_object()
+
+        if form.cleaned_data['password']:
+            user.password = make_password(form.cleaned_data['password'])
+
+        user.save()
+        login(self.request, user)
+        return redirect('profile', username=user.username)
+
+
+class SubscriptionListView(ListView):
+
+    def get_queryset(self):
+        if self.get_view() == 'followers':
+            users = (
+                User.objects.get(username=self.kwargs['username'])
+                .subscribers.all().prefetch_related('subscribers')
+            )
+        else:
+            users = (
+                User.objects.get(username=self.kwargs['username'])
+                .subscriptions.all().prefetch_related('subscribers')
+            )
+        return users
+
+    def get_view(self):
+        return self.request.resolver_match.view_name
+
+    def get(self, *args, **kwargs):
+        users = self.get_queryset()
+        context = {'users': users}
+
+        return render(self.request, 'base/followers_subscriptions.html', context)
+
+
+@login_required(login_url='login')
+def subscribe(request, username):
+    user = get_object_or_404(User, username=username)
+
+    if request.user != user:
+        is_subscribe = True if request.resolver_match.view_name == 'subscribe' else False
+        user.subscribers.add(request.user) if is_subscribe else user.subscribers.remove(request.user)
+
+        user_subscribers = user.subscribers.all().count()
+        user_subscriptions = user.subscriptions.all().count()
+
+        return JsonResponse({
+            'is_subscribe_button': is_subscribe,
+            'subscribers': user_subscribers,
+            'subscriptions': user_subscriptions
+        })
+
+    return redirect('profile', request.user.username)
 
 
 def search(request):
-    users = User.objects.all()
+    users = User.objects.all().prefetch_related('subscribers')
     context = {'users': users}
     return render(request, 'base/search.html', context)
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('home')
 
 
 def custom_404_view(request, exception):
