@@ -47,13 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const likePostButtons = document.querySelectorAll('.like-post');
     const likeCommentButtons = document.querySelectorAll('.like-comment');
     const redirect = document.querySelectorAll('.post-button');
-    const subscribeButtons = document.querySelectorAll('.subscribe-button');
-    const replyOnPost = document.querySelectorAll('.reply-on-post');
+    const subscribe = document.querySelectorAll('.subscribe-button');
+    const unsubscribe = document.querySelectorAll('.unsubscribe-button');
+    // const replyOnPost = document.querySelectorAll('.reply-on-post');
 
     likePostButtons.forEach(button => {
         button.addEventListener('click', function() {
             const user_is_authenticated = this.getAttribute('data-user');
             const postId = this.getAttribute('data-post-id');
+            const content_type = 'post';
 
             if (user_is_authenticated === 'True') {
                 const post_likes_count = document.querySelector(`.post-likes-count[data-post-id="${postId}"]`);
@@ -61,11 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const post_info_dot = document.querySelector(`.info-dot[data-post-id="${postId}"]`);
                 const verticalLineElement = document.querySelector(`.vl[data-post-id="${postId}"]`);
 
-                fetch(`/like-post/${postId}/`)
+                fetch(`/like-button/${postId}/${content_type}`)
                     .then(response => response.json())
                     .then(data => {
                         updateLikeButtonForPost(this, data.is_liked);
-                        post_updateCounts(postId, post_likes_count, post_comments_count, post_info_dot, verticalLineElement, data.post_like_count, data.post_comment_count, data.profile_image);
+                        post_updateCounts(postId, post_likes_count, post_comments_count, post_info_dot, verticalLineElement, data.likes_count, data.comments_count, data.profile_image);
                     });
             } else {
                 window.location.href = `/login/?next=/post/${postId}/`
@@ -77,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const user_is_authenticated = this.getAttribute('data-user');
             const postId = this.getAttribute('data-post-id');
+            const type = 'comment';
 
             if (user_is_authenticated === 'True') {
                 const commentId = this.getAttribute('data-comment-id');
@@ -84,11 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const comment_comments_count = document.querySelector(`.comment-comments-count[data-comment-id="${commentId}"]`);
                 const comment_info_dot = document.querySelector(`.info-dot[data-comment-id="${commentId}"]`);
 
-                fetch(`/like-comment/${postId}/${commentId}/`)
+                fetch(`/like-button/${commentId}/${type}`)
                     .then(response => response.json())
                     .then(data => {
                         updateLikeButtonForComment(this, data.is_liked);
-                        comment_updateCounts(commentId, comment_likes_count, comment_comments_count, comment_info_dot, data.comment_like_count, data.comment_comment_count);
+                        comment_updateCounts(commentId, comment_likes_count, comment_comments_count, comment_info_dot, data.likes_count, data.comments_count);
                     });
             } else {
                 window.location.href = `/login/?next=/post/${postId}/`
@@ -103,20 +106,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    subscribeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const userId = this.getAttribute('data-user');
-            window.location.href = `/subscribe/${userId}/`;
-        });
+    subscribe.forEach(button => {
+        button.removeEventListener('click', handleClickSubscribeButton);
+        button.addEventListener('click', handleClickSubscribeButton);
     });
 
-    replyOnPost.forEach(button => {
-        button.addEventListener('click', function() {
-            const postId = this.getAttribute('data-post-id');
-            window.location.href = `/reply/${postId}/`;
-        });
+    unsubscribe.forEach(button => {
+        button.removeEventListener('click', handleClickSubscribeButton);
+        button.addEventListener('click', handleClickSubscribeButton);
     });
+
+    // replyOnPost.forEach(button => {
+    //     button.addEventListener('click', function() {
+    //         const postId = this.getAttribute('data-post-id');
+    //         window.location.href = `/reply/${postId}/`;
+    //     });
+    // });
 });
+
+function handleClickSubscribeButton() {
+    const user_is_authenticated = this.getAttribute('data-user-auth');
+    const userName = this.getAttribute('data-user');
+    const isSubscribedButton = this.classList.contains('subscribe-button');
+    const endpoint = isSubscribedButton ? 'subscribe' : 'unsubscribe';
+
+    if (user_is_authenticated === 'True') {
+        fetch(`/${userName}/${endpoint}/`)
+            .then(response => response.json())
+            .then(data => {
+                updateSubscribeButton(this, data.is_subscribe_button);
+                updateSubscriptionCounts(data.subscribers, data.subscriptions);
+            });
+    } else {
+        window.location.href = `/login/?next=/@${userName}/`
+    }
+}
+
+
+function updateSubscribeButton(button, isSubscribed) {
+    const buttonText = button.querySelector('span');
+
+    if (isSubscribed) {
+        buttonText.textContent = 'Відписатись';
+        button.classList.remove('subscribe-button');
+        button.classList.add('unsubscribe-button');
+    } else {
+        buttonText.textContent = 'Підписатись';
+        button.classList.remove('unsubscribe-button');
+        button.classList.add('subscribe-button');
+    }
+}
+
+
+function updateSubscriptionCounts(subscribersCount, subscriptionsCount) {
+    const subscriberElement = document.querySelector('.subscribers-count');
+    const subscriptionElement = document.querySelector('.subscriptions-count');
+
+    if (subscriberElement) {
+        subscriberElement.textContent = subscribersCount;
+    }
+
+    if (subscriptionElement) {
+        subscriptionElement.textContent = subscriptionsCount;
+    }
+}
+
 
 function updateLikeButtonForPost(button, isLiked) {
     const newIcon = new Image();
