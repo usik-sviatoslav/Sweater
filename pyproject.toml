@@ -2,7 +2,7 @@
 name = "sweater"
 version = "0.1.0"
 description = ""
-authors = ["usik-sviatoslav <usik.sviatoslav.qa@gmail.com>"]
+authors = ["usik-sviatoslav <usik.sviatoslav.dev@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

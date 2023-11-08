@@ -118,7 +118,7 @@
 
       <a href="{% url 'view_post' post.id %}" class="text-decoration-none link-body-emphasis post-comments-count" data-post-id="{{ post.id }}">
         {% if post.comments_count > 0 %}
-        <span>{% if post.comments.count > 1 %}{{ post.comments_count }} відповідей {% else %} Одна відповідь {% endif %}</span>
+        <span>{% if post.comments_count > 1 %}{{ post.comments_count }} відповідей {% else %} Одна відповідь {% endif %}</span>
         {% endif %}
       </a>
 
