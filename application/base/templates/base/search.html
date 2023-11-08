@@ -42,11 +42,10 @@
         {% if forloop.last %}
           <div class="mb-4"></div>
         {% else %}
-          {% if user %}
+          {% if request.user != user %}
           <div class="d-flex justify-content-center">
             <hr class="my-1" style="color: rgba(0,0,0,0.25); width: 514px">
           </div>
-          {% else %}
           {% endif %}
         {% endif %}
         {% endfor %}
