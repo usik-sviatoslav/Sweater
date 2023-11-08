@@ -64,7 +64,9 @@ class RegisterPageView(ListView):
 class UserProfile(ListView):
 
     def get_user(self):
-        return get_object_or_404(User, username=self.kwargs['username'])
+        return get_object_or_404(
+            User.objects.all().prefetch_related('subscriptions', 'subscribers'), username=self.kwargs['username']
+        )
 
     def get_view(self):
         view_name = self.request.resolver_match.view_name
@@ -87,7 +89,7 @@ class UserProfile(ListView):
             .annotate(comments_count=Count('comments', filter=Q(comments__parent_comment=None)))
             .filter(is_file=self.is_file())
             .select_related('user')
-            .prefetch_related('likes', 'user__subscribers')
+            .prefetch_related('likes')
         )
         return queryset.count(), post_filter
 
